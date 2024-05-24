@@ -3,6 +3,6 @@
 
 @section('content')
 
-<div>test</div>
+<div>HOMEPAGE</div>
     
 @endsection
