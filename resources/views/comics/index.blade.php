@@ -17,6 +17,17 @@
       <p class="card-text">{{$comic->description}}</p>
       <div>GENERE:{{$comic->type}}</div>
       <div>DATA:{{$comic->sale_date}}</div>
+      <div class="">
+        <form action="">
+          <button type="button" class="btn btn-info mt-2">MODIFICA</button>
+        </form>
+        <form action="{{route('comics.destroy',['comic' => $comic->id])}}" method="POST">
+          @csrf
+          @method('DELETE')
+          <button type="submit" class="btn btn-danger mt-2">ELIMINA</button>
+        </form>
+      </div>
+   
     </div>
   </div>
 
