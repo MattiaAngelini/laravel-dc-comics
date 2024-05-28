@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Comic;
+use Illuminate\Support\Facades\Validator;
 
 class ComicController extends Controller
 {
@@ -41,26 +42,9 @@ class ComicController extends Controller
      */
     public function store(Request $request)
     {
-        $validated = $request->validate(
-                [
-                    'title' => 'required|min:5|max:50',
-                    'image' => 'required|max:250',
-                    'type' => 'required|max:20',
-                    'series' => 'required|max:100',
-                    'description' => 'nullable|min:10|max:2000'
-                ],
-                [
-                    'title.required' => 'Il campo titolo è obbligatorio',
-                    'title.max' => 'Il campo titolo non può avere più di 50 caratteri',
-                    'title.min' => 'Il campo titolo deve avere almeno 5 caratteri',
-                    'image.required' => 'Il campo immagine è obbligatorio',
-                    'type.required' => 'Il campo tipo è obbligatorio',
-                    'series.required' => 'Il campo serie è obbligatorio'
-                ]
-            );
-
-
+     
         $formData = $request ->all();
+        $this->validation($formData);
         $newComic = new Comic();;
         $newComic->fill($formData);
         $newComic->save();
@@ -110,8 +94,12 @@ class ComicController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $comic = Comic::findOrFail($id);
+
         $formData = $request->all();
+        $this->validation($formData);
+
+        $comic = Comic::findOrFail($id);
+        
         $comic->update($formData);
 
         return redirect()->route('comics.show', ['comic' => $comic->id]);
@@ -128,5 +116,28 @@ class ComicController extends Controller
        $comic = Comic::findOrFail($id);
        $comic-> delete();  
        return redirect()->route('comics.index');
+    }
+
+    private function validation($data) {
+        $validator = Validator::make(
+            $data,
+            [
+                'title' => 'required|min:5|max:50',
+                'image' => 'required|max:250',
+                'type' => 'required|max:20',
+                'series' => 'required|max:100',
+                'description' => 'nullable|min:10|max:2000'
+            ],
+            [
+                'title.required' => 'Il campo titolo è obbligatorio',
+                'title.max' => 'Il campo titolo non può avere più di 50 caratteri',
+                'title.min' => 'Il campo titolo deve avere almeno 5 caratteri',
+                'image.required' => 'Il campo immagine è obbligatorio',
+                'type.required' => 'Il campo tipo è obbligatorio',
+                'series.required' => 'Il campo serie è obbligatorio'
+            ]
+        )->validate();
+
+        return $validator;
     }
 }
